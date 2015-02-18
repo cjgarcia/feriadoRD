@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Días Feriados en RD</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.3/themes/redmond/jquery-ui.css">
+  </head>
+  <body>
+	<div class="container">
+		<div class="row">
+			<h1>Hoy:</h1>
+			<div class="col-md-5">
+				<form style="max-width: 60%">
+					<input type="text" class="form-control">
+				</form>
+				<br>
+	    		<button class="btn btn-info">
+		    		<i class='glyphicon glyphicon-refresh'></i>
+		    		Reiniciar
+		    	</button>
+			</div>
+			<div class="col-md-7"></div>
+		</div>
+	</div>
+	<!--JQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--Datepicker-->
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script src="datepicker.js"></script>
+    <!--Bootstrap.js-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <!--FeriadoRD.js-->
+    <script src="feriadoRD.js"></script>
+    <!--Demo script-->
+    <script>
+
+    	var fecha = $("input[type='text']");
+    	var hoy = new Date().toLocaleDateString();
+    	var contF = $(".col-md-5");
+    	var contW = $(".col-md-7");
+
+    	$(function(){
+    		fecha.datepicker();
+    		fecha.val(hoy);
+    		validar(hoy);
+    	});
+
+    	fecha.change(function(){
+    		validar($(this).val());
+    	});
+
+    	//Reiniciar
+    	$("button.btn").click(function(){
+    		$("h1").text("Hoy:");
+    		$("p").remove();
+    		fecha.val(hoy);
+    		validar(hoy);
+    	});
+
+    	function validar(strf){
+
+    		if(hoy != strf) $("h1").text("Fecha:");
+    		else $("h1").text("Hoy:");
+
+    		var f = new FeriadoRD(strf);
+    		var r = (f.resp) ? f.resp.msj : f.msj;
+
+    		var p = $("<p style='padding:1em'></p>");
+
+    		if (f.resp)
+    		 contW.append(p.addClass('bg-danger').text(r));
+    		else
+    		 contW.append(p.addClass('bg-success').text(r));
+    	}
+    </script>
+  </body>
+</html>
