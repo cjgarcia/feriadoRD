@@ -65,7 +65,7 @@ var FeriadoRD = function(date, descp){
 
 	this.day = date;
 	this.descp = descp;
-	this.resp = null;
+	this.resp = false;
 	this.msj = "¡Error al tratar de convertir la fecha!";
 
 	var fecha = (descp) ? null : new Date(Date.parse(AjustarDMA(date)));
@@ -79,16 +79,20 @@ var FeriadoRD = function(date, descp){
 		DiasFC(fecha.getFullYear());
 		DiasFNC(fecha.getFullYear());
 
-		this.resp = Validar(fecha.getDayOY());
+		var fv = Validar(fecha.getDayOY());
 
-		if(this.resp)
+		if(fv)
 		{
-		    this.resp.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
-			this.resp.msj += " de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
-			this.resp.msj += " es no laborable, ya que se celebra el "+this.resp.descp+".";
+			this.day = fv.day;
+			this.descp = fv.descp;
+			this.resp = fv.resp;
+		    this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
+			this.msj += " de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
+			this.msj += " es no laborable, ya que se celebra el "+this.descp+".";
 		}
 		else
 		{
+			this.descp = "laborable";
 			this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
 			this.msj +=" de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
 			this.msj += " es laborable."
@@ -186,7 +190,10 @@ var FeriadoRD = function(date, descp){
 	function Validar(f)
 	{
 	    for(var i in nWD)
-	       if (f == nWD[i].day) return nWD[i];
+	       if (f == nWD[i].day){
+	       	   nWD[i].resp = true;
+	       	   return nWD[i];
+	       }
 
 	   	return null;
 	}

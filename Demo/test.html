@@ -33,7 +33,7 @@
     <!--Bootstrap.js-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <!--FeriadoRD.js-->
-    <script src="feriadoRD.js"></script>
+    <script src="../feriadoRD.min.js"></script>
     <!--Demo script-->
     <script>
 
@@ -65,15 +65,13 @@
     		if(hoy != strf) $("h1").text("Fecha:");
     		else $("h1").text("Hoy:");
 
-    		var f = new FeriadoRD(strf);
-    		var r = (f.resp) ? f.resp.msj : f.msj;
-
     		var p = $("<p style='padding:1em'></p>");
+            var f = new FeriadoRD(strf);
 
     		if (f.resp)
-    		 contW.append(p.addClass('bg-danger').text(r));
+    		 contW.append(p.addClass('bg-danger').text(f.msj));
     		else
-    		 contW.append(p.addClass('bg-success').text(r));
+    		 contW.append(p.addClass('bg-success').text(f.msj));
     	}
     </script>
     <!--Github Ribbon-->
