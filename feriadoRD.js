@@ -39,7 +39,7 @@ Date.prototype.getStrMonth = function(){
 	}
 };
 
-//Get a string of the current day.
+//Get a string of the current day
 Date.prototype.getStrDay = function(){
 
 	switch(this.getUTCDay()){
@@ -59,18 +59,25 @@ Date.prototype.addDays = function(day){
 	return this;
 };
 
+//Func to validate an instance of a Date class
+function isDate(d) {
+  if ( Object.prototype.toString.call(d) !== "[object Date]" )
+      return false;
+  return !isNaN(d.getTime());
+}
+
+
 //Clase
 
 var FeriadoRD = function(date, descp){
 
-	this.day = date;
+	this.dia = (!isNaN(date))? date : 0;
 	this.descp = descp;
 	this.resp = false;
-	this.msj = "¡Error al tratar de convertir la fecha!";
 
 	var fecha = (descp) ? null : new Date(Date.parse(AjustarDMA(date)));
 
-	if(fecha)
+	if(isDate(fecha))
 	{
 		//Lista con los días no laborables:
 		var nWD = [];
@@ -83,7 +90,7 @@ var FeriadoRD = function(date, descp){
 
 		if(fv)
 		{
-			this.day = fv.day;
+			this.dia = fv.dia;
 			this.descp = fv.descp;
 			this.resp = fv.resp;
 		    this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
@@ -92,24 +99,38 @@ var FeriadoRD = function(date, descp){
 		}
 		else
 		{
-			this.descp = "laborable";
+			this.dia = fecha.getDayOY();
+			this.descp = "Laborable.";
 			this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
 			this.msj +=" de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
 			this.msj += " es laborable."
 		}
+	}
+	else if(!descp)
+	{
+		this.msj = "¡Error al tratar de convertir la fecha!";
+		this.descp = "¡Error! Entre un formato de fecha soportado.";
 	}
 
 	/****METODOS****/
 
 	 //Ajusta la fecha al formato aaaa/mm/dd si es necesario.
 
-	 function AjustarDMA(f){
+	 function AjustarDMA(f)
+	 {
+	 	if(!isNaN(f)) return "¡Error! Tipo de dato";
 
-	 	if (f.match(/^\d{4}/)) return f;
-	 	  //Arreglo con la fecha dd/mm/aaaa
-	 	  var af = f.replace(/(-|\/|\.)/g,"_").split("_");
-	 	  if(af[0]=="01") af[0] = "1";
-	      return (af[2]+"-"+af[1]+"-"+af[0]);
+	 	if (f.match(/^\d{4}(-|\/|\.)\d{1,2}(-|\/|\.)\d{1,2}/)) return f;
+
+ 	    //Arreglo con la fecha dd/mm/aaaa
+ 	    var af = f.replace(/(-|\/|\.)/g,"_").split("_");
+
+ 	    if(af.length != 3 || af[2].length != 4)
+ 	    	return "Formato de fecha invalido";
+
+ 	    if(af[0]=="01") af[0] = "1";
+
+        return (af[2]+"-"+af[1]+"-"+af[0]);
 	 }
 
 	/*** Ajustar el día de la fecha.
@@ -190,7 +211,7 @@ var FeriadoRD = function(date, descp){
 	function Validar(f)
 	{
 	    for(var i in nWD)
-	       if (f == nWD[i].day){
+	       if (f == nWD[i].dia){
 	       	   nWD[i].resp = true;
 	       	   return nWD[i];
 	       }
