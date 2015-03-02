@@ -1,11 +1,14 @@
-# FeriadoRD
+## FeriadoRD
+
 Libreria <b><i>JS</i></b> para validar los días feriados en la <b>República Dominicana</b>.
 
 Súper sencilla, consiste en una clase (FeriadoRD) y algunos métodos (prototype) que extienden al objeto <b>Date</b> de <b><i>JS</i></b>.
 
-Con este <a href="https://dl.dropboxusercontent.com/u/36005322/Demos/feriadoRD/test.html" target= "_black">demo</a> pueden comprobar la lista de días feriados del <a href="http://www.ministeriodetrabajo.gob.do/index.php/todas-las-noticias/651-ministerio-de-trabajo-informa-sobre-dias-feriados-correspondientes-al-ano-2015" target= "_black">2015</a> o cualquier otra.
+Con este [demo](https://dl.dropboxusercontent.com/u/36005322/Demos/feriadoRD/test.html) pueden comprobar la lista de días feriados del [2015](http://www.ministeriodetrabajo.gob.do/index.php/todas-las-noticias/651-ministerio-de-trabajo-informa-sobre-dias-feriados-correspondientes-al-ano-2015) o cualquier otra.
 
-<strong>Sobre el constructor:</strong>
+<img src="https://github.com/TurKux/feriadoRD/blob/master/Demo/Captura.png">
+
+## Sobre el constructor:
 
 Un solo argumento, un string que representa la fecha y soporta los formatos:
 
@@ -14,21 +17,39 @@ Un solo argumento, un string que representa la fecha y soporta los formatos:
     <li>mm-dd-yyyy </li> 
     <li>mm.dd.yyyy</li> 
     <li>yyyy-mm-dd</li>
-    <li>yyyy /mm/dd</li>
+    <li>yyyy/mm/dd</li>
     <li>yyyy.mm.dd</li>
  </ul>
  
-<strong>IMPORTANTE:</strong> El año tiene que estar representado por 4 dígitos.
+<b>IMPORTANTE: El año tiene que estar representado por 4 dígitos.
 
- <pre>var fecha = new FeriadoRD(“18-02-2015”);</pre> 
+```javascript
+ var fecha = new FeriadoRD(“18-02-2015”);
+```
 
-El obj fecha tendrá cuatro prop o retornara null si el formato del arg no es el correcto. La prop <b>resp</b> es un objeto <b>FeriadoRD</b> que tendrá el mensaje de validación de la fecha, de todas formas se puede obtener un mensaje para validar la creación del obj con el siguiente snippet:
-
-<pre>var msj = (fecha.resp) ? fecha.resp.msj : fecha.msj;</pre>
+El obj <b>FeriadoRD</b> tendrá cuatro prop o retornara null si el formato del arg no es el correcto.
+<table>
+    <tr>
+      <td><b>resp</b></td>
+      <td><b>true</b> o <b>false</b></td>
+    </tr>
+    <tr>
+      <td><b>descp</b></td>
+      <td><b>Mensaje</b> que describe el resultado de la evaluación.</td>
+    </tr>
+    <tr>
+      <td><b>msj</b></td>
+      <td><b>Mensaje</b> que describe en detalle el resultado de la evaluación.</td>
+    </tr>
+    <tr>
+      <td><b>dia</b></td>
+       <td>Un <b>número</b> entero que representa el día feriado con respecto al año.</td>
+    </tr>
+</table>
 
 Para más info vean el source del demo.
 
-En unos días creare una Wiki, por ahora pueden crear un <b>issue</b> o un <b>pull request</b> .
+Cualquier cosa no duden en crear un <b>issue</b> o un <b>pull request</b> .
 
 <b><i>Happy coding!</i></b>
 
