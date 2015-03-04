@@ -27,7 +27,7 @@ Un solo argumento, un string que representa la fecha y soporta los formatos:
  var fecha = new FeriadoRD(“18-02-2015”);
 ```
 
-El obj <b>FeriadoRD</b> tendrá cuatro prop o retornara null si el formato del arg no es el correcto.
+El obj <b>FeriadoRD</b> tendrá cuatro prop. 
 <table>
     <tr>
       <td><b>resp</b></td>
@@ -46,6 +46,8 @@ El obj <b>FeriadoRD</b> tendrá cuatro prop o retornara null si el formato del a
        <td>Un <b>número</b> entero que representa el día feriado con respecto al año.</td>
     </tr>
 </table>
+
+Si el argumento introducido al constructor no tiene el formato correcto las validaciones se reflejaran en las propiedades. De esta forma la propiedad “<b>resp</b>” arrojara “<b>false</b>”, la de “<b>msj</b>” y “<b>descp</b>” un mensaje como “<b>¡Error al tratar de validar la fecha!</b>” y “<b>dia</b>” devolverá “<b>0</b>”.
 
 Para más info vean el source del demo.
 
