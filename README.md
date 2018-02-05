@@ -4,7 +4,7 @@ Libreria <b><i>JS</i></b> para validar los días feriados en la <b>República Do
 
 Súper sencilla, consiste en una clase (FeriadoRD) y algunos métodos (prototype) que extienden al objeto <b>Date</b> de <b><i>JS</i></b>.
 
-Con este [demo](http://www.cjgarcia.github.io/demos/feriadoRD) pueden comprobar la lista de días feriados del [2015](http://www.ministeriodetrabajo.gob.do/index.php/todas-las-noticias/651-ministerio-de-trabajo-informa-sobre-dias-feriados-correspondientes-al-ano-2015) o cualquier otra.
+Con este [demo](http://cjgarcia.github.io/demos/feriadoRD) pueden comprobar la lista de días feriados del [2015](http://www.ministeriodetrabajo.gob.do/index.php/todas-las-noticias/651-ministerio-de-trabajo-informa-sobre-dias-feriados-correspondientes-al-ano-2015) o cualquier otra.
 
 <img src="https://github.com/TurKux/feriadoRD/blob/master/Demo/Captura.png">
 
