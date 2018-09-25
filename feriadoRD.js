@@ -1,268 +1,318 @@
+function FeriadoRD(date, description, isHoliday) {
+  /** Props **/
 
-/********************************************
- * FeriadoRD.js by CJ Garcia aka TurKux.
- * Find me at [fb,github,twitter].com/TurKux
- ********************************************/
+  this.date = date;
+  this.message = 'The object FeriadoRD was successfully created!';
+  this.description = description || '';
+  this.isHoliday = isHoliday || true;
 
-//Some methods to extend Date class
+  /** Methods **/
 
-//Get the day of a date in the current year
-Date.prototype.getDayOY = function(){
+  //Total of milliseccond since 01/01/1970
+  let getDayOfAYear = date => {
+    if (isDate(date)) {
+      const millisToNow = new Date(date.getFullYear(), 0, 1);
+      //Day of the year
+      let doy = Math.ceil((date - millisToNow) / 86400000);
+      if (date.getMilliseconds() == 0) ++doy;
+      return doy;
+    } else {
+      return 0;
+    }
+  };
 
-	//Total of milliseccond since -Jan 01 of 1970-.
-	var fd = new Date(this.getFullYear(), 0, 1);
+  //Get a string representation of the current month in spanish
+  let getStrMonth = date => {
+    switch (date.getMonth()) {
+      case 0:
+        return 'enero';
+      case 1:
+        return 'febrero';
+      case 2:
+        return 'marzo';
+      case 3:
+        return 'abril';
+      case 4:
+        return 'mayo';
+      case 5:
+        return 'junio';
+      case 6:
+        return 'julio';
+      case 7:
+        return 'agosto';
+      case 8:
+        return 'septiembre';
+      case 9:
+        return 'octubre';
+      case 10:
+        return 'noviembre';
+      case 11:
+        return 'diciembre';
+    }
+  };
 
-	//Day of the year
-	var doy = Math.ceil(((this - fd)/86400000));
+  //Get a string of the current day in spanish
+  let getStrDay = date => {
+    switch (date.getUTCDay()) {
+      case 0:
+        return 'domingo';
+      case 1:
+        return 'lunes';
+      case 2:
+        return 'martes';
+      case 3:
+        return 'miércoles';
+      case 4:
+        return 'jueves';
+      case 5:
+        return 'viernes';
+      case 6:
+        return 'sábado';
+    }
+  };
 
-	if (this.getMilliseconds() == 0) ++doy;
+  //Add a day to the current date object
+  let addDay = (date, day) => {
+    date.setTime(date.getTime() + day * 86400000);
+    return date;
+  };
 
-	return doy;
-};
+  //This func compare two dates objects
+  let sameDate = (a, b) => {
+    return getDayOfAYear(a) === getDayOfAYear(b);
+  };
 
-//Get a string of the current month.
-Date.prototype.getStrMonth = function(){
+  //Func to validate an instance of a Date class
+  let isDate = date => {
+    return date instanceof Date;
+  };
 
-	switch(this.getMonth()){
-		case 0: return "enero";
-		case 1: return "febrero";
-		case 2: return "marzo";
-		case 3: return "abril";
-		case 4: return "mayo";
-		case 5: return "junio";
-		case 6: return "julio";
-		case 7: return "agosto";
-		case 8: return "septiembre";
-		case 9: return "octubre";
-		case 10: return "noviembre";
-		case 11: return "diciembre";
-	}
-};
+  //Get the type of the date param
+  let getType = date => {
+    return Object.prototype.toString.call(date);
+  };
 
-//Get a string of the current day
-Date.prototype.getStrDay = function(){
+  /*This func validate the format of the 
+  string to be use to parse a date object*/
 
-	switch(this.getUTCDay()){
-		case 0: return "domingo";
-		case 1: return "lunes";
-		case 2: return "martes";
-		case 3: return "miércoles";
-		case 4: return "jueves";
-		case 5: return "viernes";
-		case 6: return "sábado";
-	}
-};
+  let valDateFormat = str => {
+    let pattern = /((((0[13578]|1[02])\/(0[1-9]|1[0-9]|2[0-9]|3[01]))|((0[469]|11)\/(0[1-9]|1[0-9]|2[0-9]|3[0]))|((02)(\/(0[1-9]|1[0-9]|2[0-8]))))\/(19([6-9][0-9])|20([0-9][0-9])))|((02)\/(29)\/(19(6[048]|7[26]|8[048]|9[26])|20(0[048]|1[26]|2[048])))/;
 
-//Add a day to the current date object
-Date.prototype.addDays = function(day){
-	this.setTime((this.getTime() + (day * 86400000)));
-	return this;
-};
+    return pattern.test(str);
+  };
 
-//Func to validate an instance of a Date class
-function isDate(d) {
-  if ( Object.prototype.toString.call(d) !== "[object Date]" )
-      return false;
-  return !isNaN(d.getTime());
-}
+  //Validate the date param
+  let valiDate = value => {
+    //if the value is a instance of a date object
+    if (isDate(value)) {
+      return value;
+    }
 
+    /* If the value isn't a date instance, then, i get the type of the "date" var
+    and try to convert to a date instance representation */
 
-//Clase
+    try {
+      switch (getType(value)) {
+        case '[object Undefined]':
+          this.message = 'Not "date" was defined';
+          throw new Error(this.message);
+        case '[object Number]':
+          return new Date(value);
+        case '[object String]':
+          if (!valDateFormat(value)) {
+            this.message = 'Wrong string format. Use MM/DD/YYYY';
+            throw new Error(this.message);
+          }
+          return new Date(Date.parse(value));
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
-var FeriadoRD = function(date, descp){
+  //Adjust the day for the holidays in Dominican Republic
+  let adjustDay = date => {
+    /*
+      Párrafo.- Cuando el 1º de mayo, día Internacional del Trabajo coincida con el día
+          domingo, de la semana, su carácter no laborable tendrá vigencia el lunes siguiente. 
+    
+    */
 
-	this.dia = (!isNaN(date))? date : 0;
-	this.descp = descp;
-	this.resp = false;
+    if (getDayOfAYear(date) === 121 && date.getDay() === 0) {
+      return addDay(date, 1);
+    }
 
-	var fecha = (descp) ? null : new Date(Date.parse(AjustarDMA(date)));
+    /* Ley No.139-97 
+    
+        1) Martes y miércoles el lunes precedente.
+        2) Jueves y viernes el lunes siguiente. 
+    */
 
-	if(isDate(fecha))
-	{
-		//Lista con los días no laborables:
-		var nWD = [];
+    switch (date.getDay()) {
+      //Martes
+      case 2:
+        return addDay(date, -1);
+      //Miercoles
+      case 3:
+        return addDay(date, -2);
+      //Jueves
+      case 4:
+        return addDay(date, 4);
+      //Viernes
+      case 5:
+        return addDay(date, 3);
+      //Si es Lunes, Sabado, o Domingo
+      default:
+        return date;
+    }
+  };
 
-		//Llenar la lista de los días no laborables:
-		DiasFC(fecha.getFullYear());
-		DiasFNC(fecha.getFullYear());
+  //Computus is a method to get the Easter day.
+  //Source => http://es.wikipedia.org/wiki/Computus
 
-		var fv = Validar(fecha.getDayOY());
+  let computus = year => {
+    let m = 25,
+      n = 5;
 
-		if(fv)
-		{
-			this.dia = fv.dia;
-			this.descp = fv.descp;
-			this.resp = fv.resp;
-		    this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
-			this.msj += " de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
-			this.msj += " es no laborable, ya que se celebra el "+this.descp+".";
-		}
-		else
-		{
-			this.dia = fecha.getDayOY();
-			this.descp = "Laborable.";
-			this.msj = "El " + fecha.getStrDay() +" "+ fecha.getUTCDate();
-			this.msj +=" de "+ fecha.getStrMonth() +" del "+ fecha.getFullYear();
-			this.msj += " es laborable."
-		}
-	}
-	else if(!descp)
-	{
-		this.msj = "¡Error al tratar de convertir la fecha!";
-		this.descp = "¡Error! Entre un formato de fecha soportado.";
-	}
+    if (year >= 1583 && year <= 1699) {
+      m = 22;
+      n = 2;
+    } else if (year >= 1700 && year <= 1799) {
+      m = 23;
+      n = 3;
+    } else if (year >= 1800 && year <= 1899) {
+      m = 23;
+      n = 4;
+    } else if (year >= 1900 && year <= 2099) {
+      m = 24;
+      n = 5;
+    } else if (year >= 2100 && year <= 2199) {
+      m = 24;
+      n = 6;
+    } else if (year >= 2200 && year <= 2299) {
+      m = 25;
+      n = 0;
+    }
 
-	/****METODOS****/
+    let a, b, c, d, e, day, month;
 
-	 //Ajusta la fecha al formato aaaa/mm/dd si es necesario.
+    //Get the mod
+    a = year % 19;
+    b = year % 4;
+    c = year % 7;
+    d = (19 * a + m) % 30;
+    e = (2 * b + 4 * c + 6 * d + n) % 7;
 
-	 function AjustarDMA(f)
-	 {
-	 	if(!isNaN(f)) return "¡Error! Tipo de dato";
+    //Choose between the 2 cases:
+    if (d + e < 10) {
+      day = d + e + 22;
+      month = 3;
+    } else {
+      day = d + e - 9;
+      month = 4;
+    }
 
-	 	if (f.match(/^\d{4}(-|\/|\.)\d{1,2}(-|\/|\.)\d{1,2}/)) return f;
+    // Special execeptions
+    if (day == 26 && month == 4) day = 19;
+    if (day == 25 && month == 4 && d == 28 && e == 6 && a > 10) day = 18;
 
- 	    //Arreglo con la fecha dd/mm/aaaa
- 	    var af = f.replace(/(-|\/|\.)/g,"_").split("_");
+    return new Date(year, --month, day);
+  };
 
- 	    if(af.length != 3 || af[2].length != 4)
- 	    	return "Formato de fecha invalido";
+  //Method to get all the holidays
+  let getHolidays = date => {
+    let holidays = [];
 
- 	    if(af[0]=="01") af[0] = "1";
+    if (date) {
+      let year = date.getFullYear();
 
-        return (af[2]+"-"+af[1]+"-"+af[0]);
-	 }
+      //Hlidays that doesn't change with the year:
+      holidays.push(new FeriadoRD(new Date(year, 0, 21), 'Altagracia')); //21-01
+      holidays.push(new FeriadoRD(new Date(year, 1, 27), 'Independencia')); //27-02
+      holidays.push(new FeriadoRD(new Date(year, 0, 1), 'Año nuevo')); //01-01
+      holidays.push(new FeriadoRD(new Date(year, 7, 16), 'Restauración')); //16-08
+      holidays.push(new FeriadoRD(new Date(year, 8, 24), 'Virgen Mercedes')); //24-09
+      holidays.push(new FeriadoRD(new Date(year, 11, 25), 'Navidad')); //25-12
 
-	/*** Ajustar el día de la fecha.
-	 * Si cae Lunes, Sabado o Domingo, no cambia.
-	 * Si cae de Martes a Miercoles, cambia al Lunes.
-	 * Si cae de Jueves a Viernes cambia al Lunes sig.
-	 */
+      //Holidays that changes with the year:
 
-	function AjustarDia(f)
-	{
-	    if ((f.getDayOY() != 121) & (f.getDay() <= 3))
-	    {
-	        switch (f.getDay())
-	        {
-	            //Martes
-	            case 2: return f.addDays(-1);
-	            //Miercoles
-	            case 3: return f.addDays(-2);
-	            //Jueves
-	            case 4: return f.addDays(-3);
-	            //Viernes
-	            case 5: return f.addDays(-4);
-	            //Si es Lunes, Sabado, o Domingo
-	            default: return f;
-	        }
-	    }
+      //Santos Reyes Magos: 06-01
+      holidays.push(
+        new FeriadoRD(adjustDay(new Date(year, 0, 6)), 'Santos Reyes Magos')
+      );
 
-	    switch (f.getDay())
-	    {
-	        //Martes
-	        case 2: return f.addDays(6);
-	        //Miercoles
-	        case 3: return f.addDays(5);
-	        //Jueves
-	        case 4: return f.addDays(4);
-	        //Viernes
-	        case 5: return f.addDays(3);
-	        //Si es Lunes, Sabado, o Domingo
-	        default: return f;
-	    }
-	} //Fin Ajustar días
+      //Natalicio de Juan Pablo Duarte
+      holidays.push(
+        new FeriadoRD(
+          adjustDay(new Date(year, 0, 26)),
+          'Natalicio de Juan Pablo Duarte'
+        )
+      );
 
-	//El Computus es el cálculo de la fecha de Pascua
-	//Source => http://es.wikipedia.org/wiki/Computus
-	function Computus(ano)
-	{
-	    var M = 25;
-	    var N = 5;
+      //Internacional de los Trabajadores: 01-05
+      holidays.push(
+        new FeriadoRD(
+          adjustDay(new Date(year, 4, 1)),
+          'Internacional de los Trabajadores'
+        )
+      );
 
-	    if (ano >= 1583 && ano <= 1699) { M = 22; N = 2; }
-	    else if (ano >= 1700 && ano <= 1799) { M = 23; N = 3; }
-	    else if (ano >= 1800 && ano <= 1899) { M = 23; N = 4; }
-	    else if (ano >= 1900 && ano <= 2099) { M = 24; N = 5; }
-	    else if (ano >= 2100 && ano <= 2199) { M = 24; N = 6; }
-	    else if (ano >= 2200 && ano <= 2299) { M = 25; N = 0; }
+      //Constitución de la República Dominicana: 06-11
+      holidays.push(
+        new FeriadoRD(
+          adjustDay(new Date(year, 10, 6)),
+          'Constitución de la Rep. Dominicana'
+        )
+      );
 
-	    var a, b, c, d, e, dia, mes;
+      /* Special cases: */
 
-	    //Cálculo de residuos
-	    a = ano % 19;
-	    b = ano % 4;
-	    c = ano % 7;
-	    d = (19 * a + M) % 30;
-	    e = (2 * b + 4 * c + 6 * d + N) % 7;
+      //Viernes Santo
+      holidays.push(new FeriadoRD(addDay(computus(year), -2), 'Viernes Santo'));
 
-	    // Decidir entre los 2 casos:
-	    if (d + e < 10) { dia = d + e + 22; mes = 3; }
-	    else { dia = d + e - 9; mes = 4; }
+      //Corpus Christi
+      holidays.push(
+        new FeriadoRD(addDay(computus(year), 60), 'Corpus Christi')
+      );
+    }
 
-	    // Excepciones especiales
-	    if (dia == 26 && mes == 4) dia = 19;
-	    if (dia == 25 && mes == 4 && d == 28 && e == 6 && a > 10) dia = 18;
+    return holidays;
+  };
 
-	    return new Date(ano, --mes, dia);
-	}
+  //Get a cool description well formated :D
+  let getDescription = holiday => {
+    let strDesc = `El ${getStrDay(this.date)} ${this.date.getDate()} `;
+    strDesc += `de ${getStrMonth(this.date)} `;
+    strDesc += `(${this.date.getFullYear()}) es laborable.`;
 
-	//Retorno el obj FeriadoRD si hay coincidencia.
-	function Validar(f)
-	{
-	    for(var i in nWD)
-	       if (f == nWD[i].dia){
-	       	   nWD[i].resp = true;
-	       	   return nWD[i];
-	       }
+    if (holiday) {
+      strDesc = `El ${getStrDay(holiday.date)} ${holiday.date.getDate()} de`;
+      strDesc += ` ${getStrMonth(holiday.date)} `;
+      strDesc += `(${this.date.getFullYear()}) es feriado. `;
+      strDesc += `Se celebra el día de ${holiday.description}.`;
+    }
 
-	   	return null;
-	}
+    return strDesc;
+  };
 
-	//Agrega a la lista Días Feriados:
+  //Check is the date is a holiday
+  let check = date => {
+    let holidays = getHolidays(date);
+    return holidays.find(f => sameDate(f.date, date));
+  };
 
-    //Feriados que no cambian dependiendo el día de la semana.
+  //Init
+  ((date, description) => {
+    if (!description) {
+      this.date = valiDate(date);
+      let holiday = check(this.date);
 
-	function DiasFNC(ano)
-	{
-		 //Días que no cambian idependiente del año:
-	     nWD.push(new FeriadoRD(1,"día de Año Nuevo")); //01-01
-	     nWD.push(new FeriadoRD(21,"día de la Altagracia"));//21-01
-	     nWD.push(new FeriadoRD(58,"día de la Independencia"));//27-02
-	     nWD.push(new FeriadoRD(228,"día de la Restauración"));//16-08
-	     nWD.push(new FeriadoRD(267,"día de las Mercedes"));//24-09
-	     nWD.push(new FeriadoRD(359,"día de Navidad"));//25-12
-
-	    //Días que se calculan por año.
-
-	    //Viernes Santo
-	    nWD.push(new FeriadoRD(
-	        Computus(ano).addDays(-2).getDayOY(),
-	        "Viernes Santo"
-	    ));
-
-	    //Corpus Christi
-	    nWD.push(new FeriadoRD(
-    		Computus(ano).addDays(60).getDayOY(),
-            "Corpus Christi"
-        ));
-	}
-
-	//Feriados que cambian dependiendo el año:
-
-	function DiasFC(ano)
-	{
-	    nWD.push(new FeriadoRD(AjustarDia(new Date(ano, 0, 6)).getDayOY(),
-	    	"día de los Santos Reyes")); //06-01
-
-	    nWD.push(new FeriadoRD(AjustarDia(new Date(ano, 0, 26)).getDayOY(),
-	    	"día de Duarte")); //26-01
-
-	    nWD.push(new FeriadoRD(AjustarDia(new Date(ano, 4, 1)).getDayOY(),
-	    	"día del trabajo")); //1-05
-
-	    nWD.push(new FeriadoRD(AjustarDia(new Date(ano, 10, 6)).getDayOY(),
-	    	"día de la constitución")); //06-11
-	}
-
-}//Fin FeriadoRD
+      if (holiday) {
+        this.description = getDescription(holiday);
+      } else {
+        this.description = getDescription();
+        this.isHoliday = false;
+      }
+    }
+  })(date, description);
+} //Tha's all folks :P
