@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DEMO - Días Feriados en RD</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.3/themes/redmond/jquery-ui.css">
-  </head>
-  <body>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>DEMO - Días Feriados en RD</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.3/themes/redmond/jquery-ui.css">
+</head>
+
+<body>
 	<div class="container">
 		<div class="row">
 			<h1>Hoy:</h1>
@@ -17,65 +19,69 @@
 					<input type="text" class="form-control">
 				</form>
 				<br>
-	    		<button class="btn btn-info">
-		    		<i class='glyphicon glyphicon-refresh'></i>
-		    		Reiniciar
-		    	</button>
+				<button class="btn btn-info">
+					<i class='glyphicon glyphicon-refresh'></i>
+					Reiniciar
+				</button>
 			</div>
-            <hr><!--Resultados-->
+			<hr>
+			<!--Resultados-->
 			<div class="col-md-7"></div>
 		</div>
 	</div>
 	<!--JQuery-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <!--Datepicker-->
-    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-    <script src="datepicker.js"></script>
-    <!--Bootstrap.js-->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <!--FeriadoRD.js-->
-    <script src="../feriadoRD.min.js"></script>
-    <!--Demo script-->
-    <script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<!--Datepicker-->
+	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+	<script src="datepicker.js"></script>
+	<!--Bootstrap.js-->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<!--FeriadoRD.js-->
+	<script src="../feriadoRD.min.js"></script>
+	<!--Demo script-->
+	<script>
 
-    	var fecha = $("input[type='text']");
-    	var hoy = new Date().toLocaleDateString();
-    	var contF = $(".col-md-5");
-    	var contW = $(".col-md-7");
+		var fecha = $("input[type='text']");
+		var options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+		var hoy = new Date().toLocaleDateString('es-ES', options);
+		var contF = $(".col-md-5");
+		var contW = $(".col-md-7");
 
-    	$(function(){
-    		fecha.datepicker();
-    		fecha.val(hoy);
-    		validar(hoy);
-    	});
+		$(function () {
+			fecha.datepicker();
+			fecha.val(hoy);
+			validar(hoy);
+		});
 
-    	fecha.change(function(){
-    		validar($(this).val());
-    	});
+		fecha.change(function () {
+			validar($(this).val());
+		});
 
-    	//Reiniciar
-    	$("button.btn").click(function(){
-    		$("h1").text("Hoy:");
-    		$("p").remove();
-    		fecha.val(hoy);
-    		validar(hoy);
-    	});
+		//Reiniciar
+		$("button.btn").click(function () {
+			$("h1").text("Hoy:");
+			$("p").remove();
+			fecha.val(hoy);
+			validar(hoy);
+		});
 
-    	function validar(strf){
+		function validar(strf) {
 
-    		if(hoy != strf) $("h1").text("Fecha:");
-    		else $("h1").text("Hoy:");
+			if (hoy != strf) $("h1").text("Fecha:");
+			else $("h1").text("Hoy:");
 
-    		var p = $("<p style='padding:1em'></p>");
-            var f = new FeriadoRD(strf);
+			var p = $("<p style='padding:1em'></p>");
+			var f = new FeriadoRD(strf);
 
-    		if (f.resp)
-    		 contW.append(p.addClass('bg-danger').text(f.msj));
-    		else
-    		 contW.append(p.addClass('bg-success').text(f.msj));
-    	}
-    </script>
-    <!--Github Ribbon-->
-    <a href="https://github.com/TurKux/feriadoRD"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-  </body>
+			if (f.resp)
+				contW.append(p.addClass('bg-danger').text(f.msj));
+			else
+				contW.append(p.addClass('bg-success').text(f.msj));
+		}
+	</script>
+	<!--Github Ribbon-->
+	<a href="https://github.com/TurKux/feriadoRD"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+		 alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+</body>
+
 </html>
